@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     '/articles'         => ['controller' => 'ArticleController', 'method' => 'getAllArticles'],
 
     '/create_article'     => ['controller' => 'ArticleController', 'method' => 'createArticle'],
@@ -11,10 +12,21 @@ return [
 
     '/delete_article'         => ['controller' => 'ArticleController', 'method' => 'deleteArticle'],
 
+//-----------------------------------------------------------//
 
     '/categories' => ['controller' => 'CategoryController', 'method' => 'getAllCategories'],
 
     '/create_category'     => ['controller' => 'CategoryController', 'method' => 'createCategory'],
+
+    '/update_category' => ['controller' => 'CategoryController', 'method' => 'updateCategory'],
+
+    '/delete_category'         => ['controller' => 'CategoryController', 'method' => 'deleteCategory'],
+
+    '/delete_categories'         => ['controller' => 'CategoryController', 'method' => 'deleteAllCategories'],
+
+//--------------------------------------------------------------//
+
+
 
     '/login'         => ['controller' => 'AuthController', 'method' => 'login'],
     '/register'         => ['controller' => 'AuthController', 'method' => 'register'],

@@ -51,17 +51,42 @@ abstract class Model{
 
     }
 
-    public function update(mysqli $mysqli, array $data){
-        $sql = "UPDATE " . static::$table . " SET name = ?, author = ?, description = ?, category_id = ? WHERE " . static::$primary_key . " = ?";
+    // public function update(mysqli $mysqli, array $data){
+    //     $sql = "UPDATE " . static::$table . " SET name = ?, author = ?, description = ?, category_id = ? WHERE " . static::$primary_key . " = ?";
+
+    //     $stmt = $mysqli->prepare($sql);
+    //     if(!$stmt) return false;
+
+    //     $stmt->bind_param(
+    //         "ssssi",
+    //         $data["name"],
+    //         $data["author"], $data["description"], $data["category_id"], $this->id
+    //     );
+
+    //     return $stmt->execute();
+    // }
+
+    public function update($mysqli, $data) {
+        $columns = array_keys($data);
+        $keys = [];
+
+        foreach ($columns as $col) {
+            $keys[] = "$col = ?";
+        }
+
+        $set = implode(", ", $keys);
+
+        $sql = sprintf("UPDATE %s SET %s WHERE %s =?", static::$table, $set, static::$primary_key);
 
         $stmt = $mysqli->prepare($sql);
         if(!$stmt) return false;
 
-        $stmt->bind_param(
-            "ssssi",
-            $data["name"],
-            $data["author"], $data["description"], $data["category_id"], $this->id
-        );
+        $values = array_values($data);
+        $values[] = $this->id;
+
+        $types = str_repeat("s", count($data)) . "i";
+
+        $stmt->bind_param($types, ...$values);
 
         return $stmt->execute();
     }

@@ -3,7 +3,7 @@ require_once("Model.php");
 
 class Category extends Model{
 
-    private int $id; 
+    protected int $id; 
     private string $name; 
     private string $created_at; 
     private string $updated_at; 
