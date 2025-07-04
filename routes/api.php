@@ -11,6 +11,11 @@ return [
 
     '/delete_article'         => ['controller' => 'ArticleController', 'method' => 'deleteArticle'],
 
+
+    '/categories' => ['controller' => 'CategoryController', 'method' => 'getAllCategories'],
+
+    '/create_category'     => ['controller' => 'CategoryController', 'method' => 'createCategory'],
+
     '/login'         => ['controller' => 'AuthController', 'method' => 'login'],
     '/register'         => ['controller' => 'AuthController', 'method' => 'register'],
 

@@ -25,8 +25,13 @@ class Category extends Model{
         return $this->name;
     }
 
+    public function toArray(){
+        return [$this->id, $this->name, $this->created_at, $this->updated_at];
 
 
 
+
+
+    }
 
 }
