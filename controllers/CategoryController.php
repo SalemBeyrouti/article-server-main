@@ -4,22 +4,24 @@ require(__DIR__ . "/../models/Category.php");
 require(__DIR__ . "/../connection/connection.php");
 require(__DIR__ . "/../services/CategoryService.php");
 require(__DIR__ . "/../services/ResponseService.php");
+require_once(__DIR__ . "/BaseController.php");
 
-class CategoryController {
+class CategoryController extends BaseController {
      public function getAllCategories(){
         global $mysqli;
 
         if(!isset($_GET["id"])){
             $categories = Category::all($mysqli);
             $categories_array = CategoryService::categoriesToArray($categories); 
-            echo ResponseService::success_response($categories_array);
-            return;
+            $this->success($categories_array);
         }
 
         $id = $_GET["id"];
-        $category = Category::find($mysqli, $id)->toArray();
-        echo ResponseService::success_response($category);
-        return;
+        $category = Category::find($mysqli, $id);
+        if (!$category) {
+            $this->error("article not found");
+        }
+        $this->success($category->toArray());
     }
 
     public function createCategory() {
@@ -31,11 +33,9 @@ class CategoryController {
             "name" => $body["name"]
         ]);
 
-        if($success) {
-            echo ResponseService::success_response("category created");
-        } else {
-            ResponseService::error_response("failed to create");
-        }
+        $success 
+            ? $this->success("category created")
+            : $this->error("failed to create");
 
 
     }
@@ -47,8 +47,7 @@ class CategoryController {
 
         $category = Category::find($mysqli, $id);
         if(!$category) {
-            ResponseService::error_response("failed to update");
-            return;
+            $this->error("category not found");
         }
         $body = json_decode(file_get_contents("php://input"), true);
         
@@ -56,11 +55,9 @@ class CategoryController {
             "name" => $body["name"],
         ]);
 
-        if($success) {
-            echo ResponseService::success_response("category updated");
-        } else {
-            ResponseService::error_response("failed to update");
-        }
+        $success
+            ? $this->success("category updated")
+            : $this->error("failed to update");
     }
 
 
@@ -76,16 +73,14 @@ class CategoryController {
 
         $category = Category::find($mysqli, $id);
         if(!$category) {
-            echo ResponseService::error_response("category not found", 400);
-            return;
+            $this->error("category not found");
         }
 
         $success = Category::delete($mysqli, $id);
-        if($success) {
-            echo ResponseService::success_response("category deleted", 200);
-        } else {
-            echo ResponseService::error_response("failed to delete", 400);
-        }
+        
+        $success
+            ? $this->success("category deleted")
+            : $this->error("failed to delete");
     }
 
     public function deleteAllCategories() {
@@ -93,11 +88,10 @@ class CategoryController {
 
         $success = Category::deleteAll($mysqli);
 
-        if($success) {
-            echo ResponseService::success_response("all categories deleted", 200);
-        } else {
-            echo ResponseService::error_response("failed to delete", 400);
-        }
+        $success
+            ? $this->success("all categories deleted")
+            : $this->error("failed to delete all categories");
+            
     }
 
 

@@ -4,8 +4,8 @@ require(__DIR__ . "/../models/Article.php");
 require(__DIR__ . "/../connection/connection.php");
 require(__DIR__ . "/../services/ArticleService.php");
 require(__DIR__ . "/../services/ResponseService.php");
-
-class ArticleController{
+require_once(__DIR__ . "/BaseController.php");
+class ArticleController extends BaseController {
     
     public function getAllArticles(){
         global $mysqli;
@@ -13,14 +13,15 @@ class ArticleController{
         if(!isset($_GET["id"])){
             $articles = Article::all($mysqli);
             $articles_array = ArticleService::articlesToArray($articles); 
-            echo ResponseService::success_response($articles_array);
-            return;
+            $this->success($articles_array);
         }
 
         $id = $_GET["id"];
-        $article = Article::find($mysqli, $id)->toArray();
-        echo ResponseService::success_response($article);
-        return;
+        $article = Article::find($mysqli, $id);
+        if(!$article){
+            $this->error("article not found");
+        }
+        $this->success($article->toArray());
     }
 
     public function createArticle() {
@@ -35,11 +36,10 @@ class ArticleController{
             "category_id" => $body["category_id"]
         ]);
 
-        if($success) {
-            echo ResponseService::success_response("article created successfully");
-        }else {
-            ResponseService::error_response("failed to create");;
-        }
+        $success 
+            ? $this->success("article created")
+            : $this->error("failed to create");
+        
 
 
     }
@@ -51,8 +51,7 @@ class ArticleController{
 
         $article = Article::find($mysqli, $id);
         if(!$article) {
-           ResponseService::error_response("failed to update");;
-            return;
+           $this->error("article not found");
         }
 
         $body = json_decode(file_get_contents("php://input"), true);
@@ -64,36 +63,30 @@ class ArticleController{
             "category_id" => $body["category_id"],
         ]);
 
-        if($success) {
-            echo ResponseService::success_response("Article updated");
-        } else {
-            ResponseService::error_response("failed to update");
-        }
+        $success
+            ? $this->success("article updated")
+            : $this->error("failed to update");
     }
 
     public function deleteArticle(){
         global $mysqli;
 
         if (!isset($_GET["id"])) {
-            echo ResponseService::error_response("enter ID", 400);
-            return;
+            $this->error("enter id");
         }
 
         $id = intval($_GET["id"]);
         
         $article = Article::find($mysqli, $id);
         if(!$article) {
-            echo ResponseService::error_response("article not found", 400);
-            return;
+            $this->error("article not found");
         }
 
         $success = Article::delete($mysqli, $id);
 
-        if($success) {
-            echo ResponseService::success_response("article deleted", 200);
-        } else {
-            echo ResponseService::error_response("failed", 400);
-        }
+       $success
+            ? $this-> success("article deleted")
+            : $this->error("failed to delete");
     }
 
     public function deleteAllArticles(){
@@ -101,18 +94,10 @@ class ArticleController{
 
         $success = Article::deleteAll($mysqli);
 
-        if ($success) {
-            echo ResponseService::success_response("all articles deleted", 200);
-        } else {
-            echo ResponseService::error_response("failed to delete", 400);
-        }
+        $success
+            ? $this->success("all articles deleted")
+            : $this->error("failed to delete all articles");
 
     }
 }
 
-//To-Do:
-
-//1- Try/Catch in controllers ONLY!!! 
-//2- Find a way to remove the hard coded response code (from ResponseService.php)
-//3- Include the routes file (api.php) in the (index.php) -- In other words, seperate the routing from the index (which is the engine)
-//4- Create a BaseController and clean some imports 
