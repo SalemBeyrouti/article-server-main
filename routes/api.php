@@ -12,6 +12,10 @@ return [
 
     '/delete_article'         => ['controller' => 'ArticleController', 'method' => 'deleteArticle'],
 
+    '/articles_by_category' => ['controller' => 'ArticleController', 'method' => 'getArticlesByCategory'],
+
+    
+
 //-----------------------------------------------------------//
 
     '/categories' => ['controller' => 'CategoryController', 'method' => 'getAllCategories'],
@@ -23,6 +27,8 @@ return [
     '/delete_category'         => ['controller' => 'CategoryController', 'method' => 'deleteCategory'],
 
     '/delete_categories'         => ['controller' => 'CategoryController', 'method' => 'deleteAllCategories'],
+
+    '/category_by_article' => ['controller' => 'ArticleController', 'method' => 'getCategoryByArticle'],
 
 //--------------------------------------------------------------//
 

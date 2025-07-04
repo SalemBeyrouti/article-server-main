@@ -3,7 +3,7 @@
 require(__DIR__ . "/../models/Category.php");
 require(__DIR__ . "/../connection/connection.php");
 require(__DIR__ . "/../services/CategoryService.php");
-require(__DIR__ . "/../services/ResponseService.php");
+require_once(__DIR__ . "/../services/ResponseService.php");
 require_once(__DIR__ . "/BaseController.php");
 
 class CategoryController extends BaseController {
@@ -91,7 +91,7 @@ class CategoryController extends BaseController {
         $success
             ? $this->success("all categories deleted")
             : $this->error("failed to delete all categories");
-            
+
     }
 
 

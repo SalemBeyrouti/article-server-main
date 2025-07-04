@@ -36,7 +36,7 @@ class Article extends Model{
         return $this->description;
     }
 
-    public function getCategoryId(): string {
+    public function getCategoryId(): ?int {
         return $this->category_id;
     }
 
@@ -60,6 +60,30 @@ class Article extends Model{
 
     public function toArray(){
         return [$this->id, $this->name, $this->author, $this->description, $this->category_id];
+    }
+
+
+    public static function findCategoryId(mysqli $mysqli, int $category_id) {
+
+        $sql = "SELECT * FROM articles WHERE category_id = ?";
+
+        $stmt = $mysqli->prepare($sql);
+
+        if(!$stmt) return [];
+
+        $stmt->bind_param("i", $category_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $articles = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $articles[] = new static($row);
+        }
+
+        return $articles;
+
+
     }
     
 }

@@ -1,9 +1,10 @@
 <?php 
 
 require(__DIR__ . "/../models/Article.php");
+require_once(__DIR__ . '/../models/Category.php');
 require(__DIR__ . "/../connection/connection.php");
 require(__DIR__ . "/../services/ArticleService.php");
-require(__DIR__ . "/../services/ResponseService.php");
+require_once(__DIR__ . "/../services/ResponseService.php");
 require_once(__DIR__ . "/BaseController.php");
 class ArticleController extends BaseController {
     
@@ -97,6 +98,54 @@ class ArticleController extends BaseController {
         $success
             ? $this->success("all articles deleted")
             : $this->error("failed to delete all articles");
+
+    }
+
+
+    public function getArticlesByCategory() {
+        global $mysqli;
+
+        if(!isset($_GET["id"])) {
+            $this->error("enter category id");
+        }
+
+        $category_id = ($_GET["id"]);
+        $articles = Article::findCategoryId($mysqli, $category_id);
+
+        if(empty($articles)) {
+            $this->error("no articles found");
+        }
+
+        $this->success(ArticleService::articlesToArray($articles));
+    }
+
+
+    public function getCategoryByArticle() {
+        global $mysqli;
+
+        if(!isset($_GET["id"])) {
+            $this->error("article id missing");
+        }
+
+        $article_id = ($_GET["id"]);
+
+        $article = Article::find($mysqli, $article_id);
+        if(!$article) {
+            $this->error("not found");
+
+        }
+
+        $category_id = $article->getCategoryId();
+        if (!$category_id) {
+            $this->error("no category assigned");
+        }
+
+        $category = Category::find($mysqli, $category_id);
+        if (!$category) {
+            $this->error("category not found");
+        }
+
+        $this->success($category->toArray());
 
     }
 }
