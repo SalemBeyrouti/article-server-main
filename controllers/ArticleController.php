@@ -23,10 +23,6 @@ class ArticleController{
         return;
     }
 
-    public function deleteAllArticles(){
-        die("Deleting...");
-    }
-
     public function createArticle() {
         global $mysqli;
 
@@ -73,6 +69,44 @@ class ArticleController{
         } else {
             ResponseService::error_response("failed to update");
         }
+    }
+
+    public function deleteArticle(){
+        global $mysqli;
+
+        if (!isset($_GET["id"])) {
+            echo ResponseService::error_response("enter ID", 400);
+            return;
+        }
+
+        $id = intval($_GET["id"]);
+        
+        $article = Article::find($mysqli, $id);
+        if(!$article) {
+            echo ResponseService::error_response("article not found", 400);
+            return;
+        }
+
+        $success = Article::delete($mysqli, $id);
+
+        if($success) {
+            echo ResponseService::success_response("article deleted", 200);
+        } else {
+            echo ResponseService::error_response("failed", 400);
+        }
+    }
+
+    public function deleteAllArticles(){
+        global $mysqli;
+
+        $success = Article::deleteAll($mysqli);
+
+        if ($success) {
+            echo ResponseService::success_response("all articles deleted", 200);
+        } else {
+            echo ResponseService::error_response("failed to delete", 400);
+        }
+
     }
 }
 

@@ -66,6 +66,27 @@ abstract class Model{
         return $stmt->execute();
     }
 
+    public static function delete(mysqli $mysqli, int $id) {
+        $sql = sprintf("DELETE FROM %s WHERE %s = ?", static::$table, static::$primary_key);
+
+        $stmt = $mysqli->prepare($sql);
+        if(!$stmt) return false; 
+        $stmt ->bind_param("i", $id);
+
+        return $stmt->execute();
+
+
+    }
+
+    public static function deleteAll(mysqli $mysqli) {
+        $sql = sprintf("DELETE FROM %s", static::$table);
+
+        $stmt = $mysqli->prepare($sql);
+        if (!$stmt) return false;
+
+        return $stmt->execute();
+    }
+
 
     //you have to continue with the same mindset
     //Find a solution for sending the $mysqli everytime... 
